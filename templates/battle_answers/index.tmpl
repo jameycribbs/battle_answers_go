@@ -1,0 +1,22 @@
+<div class="starter-template">
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Game</th>
+        <th>Question</th>
+        <th>Answer</th>
+        <th>Tags</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .battleanswers}}
+        <tr>
+          <td>{{.GameName}}</td>
+          <td>{{.Question}}</td>
+          <td>{{.Answer}}</td>
+          <td>{{range .Tags }} {{.}} {{ end }}</td>
+        </tr>
+      {{ end }}
+    </tbody>
+  </table>
+</div>

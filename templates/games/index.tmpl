@@ -1,0 +1,18 @@
+<div class="starter-template">
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .games}}
+        <tr>
+          <td>{{.Id}}</td>
+          <td>{{.Name}}</td>
+        </tr>
+      {{ end }}
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,33 @@
+<div class="starter-template">
+  <form action="/battle_answers" method="POST" role="form">
+    <div class="form-group">
+      <label for="editAnswerGame">Game</label>
+      <select class="form-control" name="gameid" id="editAnswerGame">
+        <option value="">Select a game...</option>
+        {{range .games}}
+          <option value="{{.Id.Hex}}">{{.Name}}</option>
+        {{ end }}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="editAnswerQuestion">Question</label>
+      <textarea name="question" class="form-control" id="editAnswerQuestion" rows="5"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="editAnswerAnswer">Answer</label>
+      <textarea name="answer" class="form-control" id="editAnswerAnswer" rows="5"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="editAnswerTags">Tags</label>
+      <textarea name="tags" class="form-control" id="editAnswerTags" rows="2"></textarea>
+      <p class="help-block">
+        Enter one or more tags each separated by a space.  Put a dash between words that should be together like 'morale-check'.
+      </p>
+    </div>
+
+    <button class="btn btn-default" type="submit">Save</button>
+  </form>
+</div>
