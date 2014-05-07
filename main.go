@@ -26,6 +26,33 @@ type BattleAnswer struct {
 	GameName       string `bson:"omitempty"`
 }
 
+type BattleAnswerRec struct {
+	GameId         string
+	Question       string
+	Answer         string
+	State          string
+	SubmitterEmail string
+	Tags           []string
+}
+
+type BattleAnswerShow struct {
+	Question       string
+	Answer         string
+	State          string
+	SubmitterEmail string
+	Tags           string
+	GameName       string
+}
+
+type BattleAnswerForm struct {
+	GameId         string `form:"gameid"`
+	Question       string `form:"question"`
+	Answer         string `form:"answer"`
+	State          string `form:"state"`
+	SubmitterEmail string `form:"submitterEmail"`
+	Tags           string `form:"tags"`
+}
+
 func DB() martini.Handler {
 	session, err := mgo.Dial("mongodb://localhost")
 	if err != nil {
@@ -47,20 +74,39 @@ func GetAllGames(db *mgo.Database) []Game {
 	return games
 }
 
-func GetAllBattleAnswers(db *mgo.Database) []BattleAnswer {
-	var battleAnswers []BattleAnswer
-	var game Game
+func GetBattleAnswerShows(db *mgo.Database, query interface{}) []BattleAnswerShow {
+	var recs []BattleAnswerRec
 
-	db.C("battle_answers").Find(nil).All(&battleAnswers)
+	db.C("battle_answers").Find(query).All(&recs)
 
-	// Populate GameName field in BattleAnswer struct from associated Game record.
-	for i, b := range battleAnswers {
-		db.C("games").FindId(bson.ObjectIdHex(b.GameId)).One(&game)
-		b.GameName = game.Name
-		battleAnswers[i] = b
+	return populateBattleAnswerShows(db, recs)
+}
+
+func populateBattleAnswerShows(db *mgo.Database, recs []BattleAnswerRec) []BattleAnswerShow {
+	recsSize := len(recs)
+	shows := make([]BattleAnswerShow, recsSize)
+
+	for i, rec := range recs {
+		shows[i] = buildBattleAnswerShow(db, rec)
 	}
 
-	return battleAnswers
+	return shows
+}
+
+func buildBattleAnswerShow(db *mgo.Database, rec BattleAnswerRec) BattleAnswerShow {
+	var show BattleAnswerShow
+	var game Game
+
+	show.Question = rec.Question
+	show.Answer = rec.Answer
+	show.State = rec.State
+	show.SubmitterEmail = rec.SubmitterEmail
+	show.Tags = strings.Join(rec.Tags, " ")
+
+	db.C("games").FindId(bson.ObjectIdHex(rec.GameId)).One(&game)
+	show.GameName = game.Name
+
+	return show
 }
 
 func main() {
@@ -95,7 +141,7 @@ func main() {
 	})
 
 	m.Get("/battle_answers", func(r render.Render, db *mgo.Database) {
-		templateData := map[string]interface{}{"metatitle": "Battle Answers", "battleanswers": GetAllBattleAnswers(db)}
+		templateData := map[string]interface{}{"metatitle": "Battle Answers", "battleanswers": GetBattleAnswerShows(db, nil)}
 		r.HTML(200, "battle_answers/index", templateData)
 	})
 
@@ -108,13 +154,8 @@ func main() {
 		battleAnswer.Tags = strings.Split(battleAnswer.Tags[0], " ")
 
 		db.C("battle_answers").Insert(battleAnswer)
-		templateData := map[string]interface{}{"metatitle": "Battle Answers", "battleanswers": GetAllBattleAnswers(db)}
+		templateData := map[string]interface{}{"metatitle": "Battle Answers", "battleanswers": GetBattleAnswerShows(db, nil)}
 		r.HTML(200, "battle_answers/index", templateData)
-	})
-
-	m.Get("/search_for_answers/new", func(r render.Render, db *mgo.Database) {
-		templateData := map[string]interface{}{"metatitle": "Battle Answers", "games": GetAllGames(db)}
-		r.HTML(200, "search_for_answers/new", templateData)
 	})
 
 	m.Run()
