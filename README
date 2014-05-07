@@ -1,0 +1,1 @@
+Battle Answers is a web application written in Go with Martini.  It uses MongoDB as the back-end database.
