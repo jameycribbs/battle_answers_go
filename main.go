@@ -58,6 +58,7 @@ func main() {
 	*/
 
 	m.Get("/battle_answers", controllers.BattleAnswersIndex)
+	m.Get("/battle_answers/new", controllers.BattleAnswersNew)
 
 	/*
 		m.Get("/battle_answers", func(r render.Render, db *mgo.Database) {

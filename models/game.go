@@ -6,6 +6,7 @@ import (
 )
 
 type GameRec struct {
+	Id   bson.ObjectId
 	Name string
 }
 

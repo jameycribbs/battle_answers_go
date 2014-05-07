@@ -23,12 +23,12 @@ func BattleAnswersIndex(r render.Render, db *mgo.Database) {
 	r.HTML(200, "battle_answers/index", templateData)
 }
 
-/*
-func NewBattleAnswer(r render.Render, db *mgo.Database) {
-	templateData := map[string]interface{}{"metatitle": "Battle Answers", "games": GetAllGames(db)}
+func BattleAnswersNew(r render.Render, db *mgo.Database) {
+	templateData := map[string]interface{}{"metatitle": "Battle Answers", "games": models.GetGameRecs(db, nil)}
 	r.HTML(200, "battle_answers/new", templateData)
 }
 
+/*
 func CreateBattleAnswer(battleAnswer BattleAnswer, r render.Render, db *mgo.Database) {
 	battleAnswer.Tags = strings.Split(battleAnswer.Tags[0], " ")
 
