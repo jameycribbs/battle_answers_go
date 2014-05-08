@@ -57,29 +57,13 @@ func main() {
 		})
 	*/
 
+	m.Get("/games", controllers.GamesIndex)
+	m.Get("/games/new", controllers.GamesNew)
+	m.Post("/games", binding.Form(controllers.GameForm{}), controllers.GamesCreate)
+
 	m.Get("/battle_answers", controllers.BattleAnswersIndex)
 	m.Get("/battle_answers/new", controllers.BattleAnswersNew)
 	m.Post("/battle_answers", binding.Form(controllers.BattleAnswerForm{}), controllers.BattleAnswersCreate)
-
-	/*
-		m.Get("/battle_answers", func(r render.Render, db *mgo.Database) {
-			templateData := map[string]interface{}{"metatitle": "Battle Answers", "battleanswers": GetBattleAnswerShows(db, nil)}
-			r.HTML(200, "battle_answers/index", templateData)
-		})
-
-		m.Get("/battle_answers/new", func(r render.Render, db *mgo.Database) {
-			templateData := map[string]interface{}{"metatitle": "Battle Answers", "games": GetAllGames(db)}
-			r.HTML(200, "battle_answers/new", templateData)
-		})
-
-		m.Post("/battle_answers", binding.Form(BattleAnswer{}), func(battleAnswer BattleAnswer, r render.Render, db *mgo.Database) {
-			battleAnswer.Tags = strings.Split(battleAnswer.Tags[0], " ")
-
-			db.C("battle_answers").Insert(battleAnswer)
-			templateData := map[string]interface{}{"metatitle": "Battle Answers", "battleanswers": GetBattleAnswerShows(db, nil)}
-			r.HTML(200, "battle_answers/index", templateData)
-		})
-	*/
 
 	m.Run()
 }

@@ -21,3 +21,7 @@ func GetGameRecs(db *mgo.Database, query interface{}) []GameRec {
 func FindGameById(db *mgo.Database, id string, game *GameRec) {
 	db.C("games").FindId(bson.ObjectIdHex(id)).One(&game)
 }
+
+func InsertGame(db *mgo.Database, rec GameRec) {
+	db.C("games").Insert(rec)
+}

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/codegangsta/martini-contrib/render"
 	"github.com/jameycribbs/battle_answers/models"
 	"labix.org/v2/mgo"
@@ -32,7 +31,7 @@ type BattleAnswerForm struct {
 func BattleAnswersIndex(r render.Render, db *mgo.Database) {
 	recs := models.GetBattleAnswerRecs(db, nil)
 
-	templateData := map[string]interface{}{"metatitle": "Battle Answers", "recs": populateDisplays(db, recs)}
+	templateData := map[string]interface{}{"metatitle": "Battle Answers", "recs": populateBattleAnswerDisplays(db, recs)}
 	r.HTML(200, "battle_answers/index", templateData)
 }
 
@@ -59,18 +58,18 @@ func BattleAnswersCreate(form BattleAnswerForm, r render.Render, db *mgo.Databas
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Helper functions
 /////////////////////////////////////////////////////////////////////////////////////////////
-func populateDisplays(db *mgo.Database, recs []models.BattleAnswerRec) []BattleAnswerDisplay {
+func populateBattleAnswerDisplays(db *mgo.Database, recs []models.BattleAnswerRec) []BattleAnswerDisplay {
 	recsSize := len(recs)
 	displays := make([]BattleAnswerDisplay, recsSize)
 
 	for i, rec := range recs {
-		displays[i] = populateDisplay(db, rec)
+		displays[i] = populateBattleAnswerDisplay(db, rec)
 	}
 
 	return displays
 }
 
-func populateDisplay(db *mgo.Database, rec models.BattleAnswerRec) BattleAnswerDisplay {
+func populateBattleAnswerDisplay(db *mgo.Database, rec models.BattleAnswerRec) BattleAnswerDisplay {
 	var display BattleAnswerDisplay
 	var game models.GameRec
 

@@ -2,14 +2,12 @@
   <table class="table table-bordered table-striped">
     <thead>
       <tr>
-        <th>Id</th>
         <th>Name</th>
       </tr>
     </thead>
     <tbody>
-      {{range .games}}
+      {{range .recs}}
         <tr>
-          <td>{{.Id}}</td>
           <td>{{.Name}}</td>
         </tr>
       {{ end }}
