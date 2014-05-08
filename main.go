@@ -1,11 +1,12 @@
 package main
 
 import (
-	//	"fmt"
+	"fmt"
 	"github.com/codegangsta/martini"
 	"github.com/codegangsta/martini-contrib/binding"
 	"github.com/codegangsta/martini-contrib/render"
 	"github.com/jameycribbs/battle_answers/controllers"
+	"html/template"
 	"labix.org/v2/mgo"
 )
 
@@ -32,6 +33,26 @@ func main() {
 	m.Use(render.Renderer(render.Options{
 		Directory: "templates",
 		Layout:    "layout",
+		Funcs: []template.FuncMap{
+			{
+				"addInClass": func(args ...interface{}) string {
+					var i int
+					var className string
+
+					i = args[0].(int)
+
+					fmt.Println(i)
+
+					if i == 0 {
+						className = "collapse in"
+					} else {
+						className = "collapse"
+					}
+
+					return className
+				},
+			},
+		},
 	}))
 
 	m.Get("/", func(r render.Render, db *mgo.Database) {

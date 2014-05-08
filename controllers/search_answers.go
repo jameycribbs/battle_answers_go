@@ -17,12 +17,19 @@ type SearchAnswerForm struct {
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Controller Actions
 /////////////////////////////////////////////////////////////////////////////////////////////
-func SearchAnswersIndex(r render.Render, db *mgo.Database, gameId string, keywords []string) {
+func SearchAnswersIndex(r render.Render, db *mgo.Database, gameId string, keywords string) {
+	var game models.GameRec
 	var recs []models.BattleAnswerRec
+	var tags []string
 
-	recs = models.GetBattleAnswerRecs(db, bson.M{"gameid": gameId, "tags": bson.M{"$all": keywords}})
+	models.FindGameById(db, gameId, &game)
 
-	templateData := map[string]interface{}{"metatitle": "Battle Answers", "recs": helpers.PopulateBattleAnswerDisplays(db, recs)}
+	tags = strings.Split(keywords, " ")
+
+	recs = models.GetBattleAnswerRecs(db, bson.M{"gameid": gameId, "tags": bson.M{"$all": tags}})
+
+	templateData := map[string]interface{}{"metatitle": "Battle Answers", "game": game, "keywords": keywords,
+		"recs": helpers.PopulateBattleAnswerDisplays(db, recs)}
 	r.HTML(200, "search_answers/index", templateData)
 }
 
@@ -32,9 +39,5 @@ func SearchAnswersNew(r render.Render, db *mgo.Database) {
 }
 
 func SearchAnswersCreate(form SearchAnswerForm, r render.Render, db *mgo.Database) {
-	var keywords []string
-
-	keywords = strings.Split(form.Keywords, " ")
-
-	SearchAnswersIndex(r, db, form.GameId, keywords)
+	SearchAnswersIndex(r, db, form.GameId, form.Keywords)
 }
