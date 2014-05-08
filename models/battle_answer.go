@@ -13,15 +13,6 @@ type BattleAnswerRec struct {
 	Tags           []string
 }
 
-type BattleAnswerForm struct {
-	GameId         string `form:"gameid"`
-	Question       string `form:"question"`
-	Answer         string `form:"answer"`
-	State          string `form:"state"`
-	SubmitterEmail string `form:"submitterEmail"`
-	Tags           string `form:"tags"`
-}
-
 func GetBattleAnswerRecs(db *mgo.Database, query interface{}) []BattleAnswerRec {
 	var recs []BattleAnswerRec
 
@@ -30,10 +21,9 @@ func GetBattleAnswerRecs(db *mgo.Database, query interface{}) []BattleAnswerRec 
 	return recs
 }
 
-/*
-func insertBattleAnswer(db *mgo.Database, rec BattleAnswerRec) {
+func InsertBattleAnswer(db *mgo.Database, rec BattleAnswerRec) {
+	db.C("battle_answers").Insert(rec)
 }
-*/
 
 func (rec BattleAnswerRec) FindGame(db *mgo.Database, game *GameRec) {
 	FindGameById(db, rec.GameId, game)

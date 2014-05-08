@@ -3,7 +3,7 @@ package main
 import (
 	//	"fmt"
 	"github.com/codegangsta/martini"
-	//"github.com/codegangsta/martini-contrib/binding"
+	"github.com/codegangsta/martini-contrib/binding"
 	"github.com/codegangsta/martini-contrib/render"
 	"github.com/jameycribbs/battle_answers/controllers"
 	"labix.org/v2/mgo"
@@ -59,6 +59,7 @@ func main() {
 
 	m.Get("/battle_answers", controllers.BattleAnswersIndex)
 	m.Get("/battle_answers/new", controllers.BattleAnswersNew)
+	m.Post("/battle_answers", binding.Form(controllers.BattleAnswerForm{}), controllers.BattleAnswersCreate)
 
 	/*
 		m.Get("/battle_answers", func(r render.Render, db *mgo.Database) {

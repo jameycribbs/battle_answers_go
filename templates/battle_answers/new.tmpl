@@ -1,8 +1,8 @@
 <div class="starter-template">
   <form action="/battle_answers" method="POST" role="form">
     <div class="form-group">
-      <label for="editAnswerGame">Game</label>
-      <select class="form-control" name="gameid" id="editAnswerGame">
+      <label for="editAnswerGameId">Game</label>
+      <select class="form-control" name="gameid" id="editAnswerGameId">
         <option value="">Select a game...</option>
         {{range .games}}
           <option value="{{.Id.Hex}}">{{.Name}}</option>

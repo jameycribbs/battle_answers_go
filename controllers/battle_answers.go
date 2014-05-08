@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/codegangsta/martini-contrib/render"
 	"github.com/jameycribbs/battle_answers/models"
 	"labix.org/v2/mgo"
@@ -16,6 +17,18 @@ type BattleAnswerDisplay struct {
 	GameName       string
 }
 
+type BattleAnswerForm struct {
+	GameId         string `form:"gameid"`
+	Question       string `form:"question"`
+	Answer         string `form:"answer"`
+	State          string `form:"state"`
+	SubmitterEmail string `form:"submitterEmail"`
+	Tags           string `form:"tags"`
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// Controller Actions
+/////////////////////////////////////////////////////////////////////////////////////////////
 func BattleAnswersIndex(r render.Render, db *mgo.Database) {
 	recs := models.GetBattleAnswerRecs(db, nil)
 
@@ -28,16 +41,24 @@ func BattleAnswersNew(r render.Render, db *mgo.Database) {
 	r.HTML(200, "battle_answers/new", templateData)
 }
 
-/*
-func CreateBattleAnswer(battleAnswer BattleAnswer, r render.Render, db *mgo.Database) {
-	battleAnswer.Tags = strings.Split(battleAnswer.Tags[0], " ")
+func BattleAnswersCreate(form BattleAnswerForm, r render.Render, db *mgo.Database) {
+	var rec models.BattleAnswerRec
 
-	db.C("battle_answers").Insert(battleAnswer)
-	templateData := map[string]interface{}{"metatitle": "Battle Answers", "battleanswers": GetBattleAnswerShows(db, nil)}
-	r.HTML(200, "battle_answers/index", templateData)
+	rec.GameId = form.GameId
+	rec.Question = form.Question
+	rec.Answer = form.Answer
+	rec.State = form.State
+	rec.SubmitterEmail = form.SubmitterEmail
+	rec.Tags = strings.Split(form.Tags, " ")
+
+	models.InsertBattleAnswer(db, rec)
+
+	BattleAnswersIndex(r, db)
 }
-*/
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// Helper functions
+/////////////////////////////////////////////////////////////////////////////////////////////
 func populateDisplays(db *mgo.Database, recs []models.BattleAnswerRec) []BattleAnswerDisplay {
 	recsSize := len(recs)
 	displays := make([]BattleAnswerDisplay, recsSize)
@@ -60,8 +81,6 @@ func populateDisplay(db *mgo.Database, rec models.BattleAnswerRec) BattleAnswerD
 	display.Tags = strings.Join(rec.Tags, " ")
 
 	rec.FindGame(db, &game)
-
-	//	db.C("games").FindId(bson.ObjectIdHex(rec.GameId)).One(&game)
 
 	display.GameName = game.Name
 
