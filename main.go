@@ -39,24 +39,6 @@ func main() {
 		r.HTML(200, "index", templateData)
 	})
 
-	/*
-		m.Get("/games", func(r render.Render, db *mgo.Database) {
-			templateData := map[string]interface{}{"metatitle": "Battle Answers", "games": GetAllGames(db)}
-			r.HTML(200, "games/index", templateData)
-		})
-
-		m.Get("/games/new", func(r render.Render, db *mgo.Database) {
-			templateData := map[string]interface{}{"metatitle": "Battle Answers"}
-			r.HTML(200, "games/new", templateData)
-		})
-
-		m.Post("/games", binding.Form(Game{}), func(game Game, r render.Render, db *mgo.Database) {
-			db.C("games").Insert(game)
-			templateData := map[string]interface{}{"metatitle": "Battle Answers", "games": GetAllGames(db)}
-			r.HTML(200, "games/index", templateData)
-		})
-	*/
-
 	m.Get("/games", controllers.GamesIndex)
 	m.Get("/games/new", controllers.GamesNew)
 	m.Post("/games", binding.Form(controllers.GameForm{}), controllers.GamesCreate)
@@ -64,6 +46,10 @@ func main() {
 	m.Get("/battle_answers", controllers.BattleAnswersIndex)
 	m.Get("/battle_answers/new", controllers.BattleAnswersNew)
 	m.Post("/battle_answers", binding.Form(controllers.BattleAnswerForm{}), controllers.BattleAnswersCreate)
+
+	m.Get("/search_answers", controllers.SearchAnswersIndex)
+	m.Get("/search_answers/new", controllers.SearchAnswersNew)
+	m.Post("/search_answers", binding.Form(controllers.SearchAnswerForm{}), controllers.SearchAnswersCreate)
 
 	m.Run()
 }

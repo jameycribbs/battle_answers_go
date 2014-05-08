@@ -2,19 +2,11 @@ package controllers
 
 import (
 	"github.com/codegangsta/martini-contrib/render"
+	"github.com/jameycribbs/battle_answers/helpers"
 	"github.com/jameycribbs/battle_answers/models"
 	"labix.org/v2/mgo"
 	"strings"
 )
-
-type BattleAnswerDisplay struct {
-	Question       string
-	Answer         string
-	State          string
-	SubmitterEmail string
-	Tags           string
-	GameName       string
-}
 
 type BattleAnswerForm struct {
 	GameId         string `form:"gameid"`
@@ -29,9 +21,11 @@ type BattleAnswerForm struct {
 // Controller Actions
 /////////////////////////////////////////////////////////////////////////////////////////////
 func BattleAnswersIndex(r render.Render, db *mgo.Database) {
-	recs := models.GetBattleAnswerRecs(db, nil)
+	var recs []models.BattleAnswerRec
 
-	templateData := map[string]interface{}{"metatitle": "Battle Answers", "recs": populateBattleAnswerDisplays(db, recs)}
+	recs = models.GetBattleAnswerRecs(db, nil)
+
+	templateData := map[string]interface{}{"metatitle": "Battle Answers", "recs": helpers.PopulateBattleAnswerDisplays(db, recs)}
 	r.HTML(200, "battle_answers/index", templateData)
 }
 
@@ -53,35 +47,4 @@ func BattleAnswersCreate(form BattleAnswerForm, r render.Render, db *mgo.Databas
 	models.InsertBattleAnswer(db, rec)
 
 	BattleAnswersIndex(r, db)
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////
-// Helper functions
-/////////////////////////////////////////////////////////////////////////////////////////////
-func populateBattleAnswerDisplays(db *mgo.Database, recs []models.BattleAnswerRec) []BattleAnswerDisplay {
-	recsSize := len(recs)
-	displays := make([]BattleAnswerDisplay, recsSize)
-
-	for i, rec := range recs {
-		displays[i] = populateBattleAnswerDisplay(db, rec)
-	}
-
-	return displays
-}
-
-func populateBattleAnswerDisplay(db *mgo.Database, rec models.BattleAnswerRec) BattleAnswerDisplay {
-	var display BattleAnswerDisplay
-	var game models.GameRec
-
-	display.Question = rec.Question
-	display.Answer = rec.Answer
-	display.State = rec.State
-	display.SubmitterEmail = rec.SubmitterEmail
-	display.Tags = strings.Join(rec.Tags, " ")
-
-	rec.FindGame(db, &game)
-
-	display.GameName = game.Name
-
-	return display
 }

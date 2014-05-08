@@ -18,7 +18,9 @@ type GameForm struct {
 // Controller Actions
 /////////////////////////////////////////////////////////////////////////////////////////////
 func GamesIndex(r render.Render, db *mgo.Database) {
-	recs := models.GetGameRecs(db, nil)
+	var recs []models.GameRec
+
+	recs = models.GetGameRecs(db, nil)
 
 	templateData := map[string]interface{}{"metatitle": "Battle Answers", "recs": populateGameDisplays(db, recs)}
 	r.HTML(200, "games/index", templateData)
