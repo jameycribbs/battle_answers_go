@@ -8,6 +8,7 @@ import (
 	"github.com/jameycribbs/battle_answers/controllers"
 	"html/template"
 	"labix.org/v2/mgo"
+	"net/http"
 )
 
 func DB() martini.Handler {
@@ -44,20 +45,21 @@ func main() {
 					fmt.Println(i)
 
 					if i == 0 {
-						className = "collapse in"
+						className = " in"
 					} else {
-						className = "collapse"
+						className = ""
 					}
 
 					return className
 				},
 				"addActiveClass": func(args ...interface{}) string {
-					var className string
+					className := ""
 
-					if args[0] == args[1] {
-						className = "active"
-					} else {
-						className = ""
+					for _, path := range args[1:] {
+						if path == args[0] {
+							className = "active"
+							break
+						}
 					}
 
 					return className
@@ -66,8 +68,8 @@ func main() {
 		},
 	}))
 
-	m.Get("/", func(r render.Render, db *mgo.Database) {
-		templateData := map[string]interface{}{"metatitle": "Battle Answers"}
+	m.Get("/", func(r render.Render, db *mgo.Database, req *http.Request) {
+		templateData := map[string]interface{}{"metatitle": "Battle Answers", "currentPath": req.URL.Path}
 		r.HTML(200, "index", templateData)
 	})
 
