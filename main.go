@@ -1,13 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"github.com/codegangsta/martini"
 	"github.com/codegangsta/martini-contrib/binding"
 	"github.com/codegangsta/martini-contrib/render"
+	"github.com/codegangsta/martini-contrib/sessions"
 	"github.com/jameycribbs/battle_answers/controllers"
 	"html/template"
 	"labix.org/v2/mgo"
+	"labix.org/v2/mgo/bson"
 	"net/http"
 )
 
@@ -29,6 +30,9 @@ func DB() martini.Handler {
 func main() {
 	m := martini.Classic()
 
+	store := sessions.NewCookieStore([]byte("battle_answers"))
+	m.Use(sessions.Sessions("my_battle_answers_session", store))
+
 	m.Use(DB())
 
 	m.Use(render.Renderer(render.Options{
@@ -42,8 +46,6 @@ func main() {
 
 					i = args[0].(int)
 
-					fmt.Println(i)
-
 					if i == 0 {
 						className = " in"
 					} else {
@@ -51,6 +53,18 @@ func main() {
 					}
 
 					return className
+				},
+				"addSelected": func(args ...interface{}) string {
+					var lastGameIdSearched string
+					selectedString := ""
+
+					lastGameIdSearched = args[1].(string)
+
+					if args[0] == bson.ObjectIdHex(lastGameIdSearched) {
+						selectedString = "selected"
+					}
+
+					return selectedString
 				},
 				"addActiveClass": func(args ...interface{}) string {
 					className := ""

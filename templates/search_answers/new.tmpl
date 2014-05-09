@@ -6,8 +6,9 @@
         <div class="col-xs-6">
           <select class="form-control" name="gameid" id="searchAnswerGame">
             <option value="">Select a game...</option>
+            {{$lastGameId := .lastGameIdSearched}}
             {{range .games}}
-              <option value="{{.Id.Hex}}">{{.Name}}</option>
+              <option {{addSelected .Id $lastGameId}} value="{{.Id.Hex}}">{{.Name}}</option>
             {{ end }}
           </select>
         </div>
