@@ -5,6 +5,7 @@ import (
 	"github.com/jameycribbs/battle_answers/helpers"
 	"github.com/jameycribbs/battle_answers/models"
 	"labix.org/v2/mgo"
+	"net/http"
 	"strings"
 )
 
@@ -20,21 +21,23 @@ type BattleAnswerForm struct {
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Controller Actions
 /////////////////////////////////////////////////////////////////////////////////////////////
-func BattleAnswersIndex(r render.Render, db *mgo.Database) {
+func BattleAnswersIndex(r render.Render, db *mgo.Database, req *http.Request) {
 	var recs []models.BattleAnswerRec
 
 	recs = models.GetBattleAnswerRecs(db, nil)
 
-	templateData := map[string]interface{}{"metatitle": "Battle Answers", "recs": helpers.PopulateBattleAnswerDisplays(db, recs)}
+	templateData := map[string]interface{}{"metatitle": "Battle Answers", "currentPath": req.URL.Path,
+		"recs": helpers.GetBattleAnswerDisplays(db, recs)}
 	r.HTML(200, "battle_answers/index", templateData)
 }
 
-func BattleAnswersNew(r render.Render, db *mgo.Database) {
-	templateData := map[string]interface{}{"metatitle": "Battle Answers", "games": models.GetGameRecs(db, nil)}
+func BattleAnswersNew(r render.Render, db *mgo.Database, req *http.Request) {
+	templateData := map[string]interface{}{"metatitle": "Battle Answers", "currentPath": req.URL.Path,
+		"games": models.GetGameRecs(db, nil)}
 	r.HTML(200, "battle_answers/new", templateData)
 }
 
-func BattleAnswersCreate(form BattleAnswerForm, r render.Render, db *mgo.Database) {
+func BattleAnswersCreate(form BattleAnswerForm, r render.Render, db *mgo.Database, req *http.Request) {
 	var rec models.BattleAnswerRec
 
 	rec.GameId = form.GameId
@@ -46,5 +49,5 @@ func BattleAnswersCreate(form BattleAnswerForm, r render.Render, db *mgo.Databas
 
 	models.InsertBattleAnswer(db, rec)
 
-	BattleAnswersIndex(r, db)
+	BattleAnswersIndex(r, db, req)
 }

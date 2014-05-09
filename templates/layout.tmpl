@@ -25,11 +25,11 @@
         </div>
         <div class="collapse navbar-collapse" id="navbar">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="/games">Games</a></li>
-            <li><a href="/games/new">Add a Game</a></li>
-            <li><a href="/battle_answers">Answers</a></li>
-            <li><a href="/battle_answers/new">Add an Answer</a></li>
-            <li><a href="/search_answers/new">Search For an Answer</a></li>
+            <li class='{{addActiveClass .currentPath "/games"}}'><a href="/games">Games</a></li>
+            <li class='{{addActiveClass .currentPath "/games/new"}}'><a href="/games/new">Add a Game</a></li>
+            <li class='{{addActiveClass .currentPath "/battle_answers"}}'><a href="/battle_answers">Answers</a></li>
+            <li class='{{addActiveClass .currentPath "/battle_answers/new"}}'><a href="/battle_answers/new">Add an Answer</a></li>
+            <li class='{{addActiveClass .currentPath "/search_answers/new"}}'><a href="/search_answers/new">Search For an Answer</a></li>
           </ul>
         </div>
       </div>

@@ -6,6 +6,7 @@ import (
 	"github.com/jameycribbs/battle_answers/models"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
+	"net/http"
 	"strings"
 )
 
@@ -17,7 +18,7 @@ type SearchAnswerForm struct {
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Controller Actions
 /////////////////////////////////////////////////////////////////////////////////////////////
-func SearchAnswersIndex(r render.Render, db *mgo.Database, gameId string, keywords string) {
+func SearchAnswersIndex(r render.Render, db *mgo.Database, gameId string, keywords string, req *http.Request) {
 	var game models.GameRec
 	var recs []models.BattleAnswerRec
 	var tags []string
@@ -28,16 +29,18 @@ func SearchAnswersIndex(r render.Render, db *mgo.Database, gameId string, keywor
 
 	recs = models.GetBattleAnswerRecs(db, bson.M{"gameid": gameId, "tags": bson.M{"$all": tags}})
 
-	templateData := map[string]interface{}{"metatitle": "Battle Answers", "game": game, "keywords": keywords,
-		"recs": helpers.PopulateBattleAnswerDisplays(db, recs)}
+	templateData := map[string]interface{}{"metatitle": "Battle Answers", "currentPath": req.URL.Path, "game": game,
+		"keywords": keywords,
+		"recs":     helpers.GetBattleAnswerDisplays(db, recs)}
 	r.HTML(200, "search_answers/index", templateData)
 }
 
-func SearchAnswersNew(r render.Render, db *mgo.Database) {
-	templateData := map[string]interface{}{"metatitle": "Battle Answers", "games": models.GetGameRecs(db, nil)}
+func SearchAnswersNew(r render.Render, db *mgo.Database, req *http.Request) {
+	templateData := map[string]interface{}{"metatitle": "Battle Answers", "currentPath": req.URL.Path,
+		"games": models.GetGameRecs(db, nil)}
 	r.HTML(200, "search_answers/new", templateData)
 }
 
-func SearchAnswersCreate(form SearchAnswerForm, r render.Render, db *mgo.Database) {
-	SearchAnswersIndex(r, db, form.GameId, form.Keywords)
+func SearchAnswersCreate(form SearchAnswerForm, r render.Render, db *mgo.Database, req *http.Request) {
+	SearchAnswersIndex(r, db, form.GameId, form.Keywords, req)
 }

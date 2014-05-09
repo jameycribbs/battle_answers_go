@@ -15,18 +15,18 @@ type BattleAnswerDisplay struct {
 	GameName       string
 }
 
-func PopulateBattleAnswerDisplays(db *mgo.Database, recs []models.BattleAnswerRec) []BattleAnswerDisplay {
+func GetBattleAnswerDisplays(db *mgo.Database, recs []models.BattleAnswerRec) []BattleAnswerDisplay {
 	recsSize := len(recs)
 	displays := make([]BattleAnswerDisplay, recsSize)
 
 	for i, rec := range recs {
-		displays[i] = populateBattleAnswerDisplay(db, rec)
+		displays[i] = getBattleAnswerDisplay(db, rec)
 	}
 
 	return displays
 }
 
-func populateBattleAnswerDisplay(db *mgo.Database, rec models.BattleAnswerRec) BattleAnswerDisplay {
+func getBattleAnswerDisplay(db *mgo.Database, rec models.BattleAnswerRec) BattleAnswerDisplay {
 	var display BattleAnswerDisplay
 	var game models.GameRec
 

@@ -51,6 +51,17 @@ func main() {
 
 					return className
 				},
+				"addActiveClass": func(args ...interface{}) string {
+					var className string
+
+					if args[0] == args[1] {
+						className = "active"
+					} else {
+						className = ""
+					}
+
+					return className
+				},
 			},
 		},
 	}))

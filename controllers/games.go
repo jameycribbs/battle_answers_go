@@ -4,6 +4,7 @@ import (
 	"github.com/codegangsta/martini-contrib/render"
 	"github.com/jameycribbs/battle_answers/models"
 	"labix.org/v2/mgo"
+	"net/http"
 )
 
 type GameDisplay struct {
@@ -17,28 +18,29 @@ type GameForm struct {
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Controller Actions
 /////////////////////////////////////////////////////////////////////////////////////////////
-func GamesIndex(r render.Render, db *mgo.Database) {
+func GamesIndex(r render.Render, db *mgo.Database, req *http.Request) {
 	var recs []models.GameRec
 
 	recs = models.GetGameRecs(db, nil)
 
-	templateData := map[string]interface{}{"metatitle": "Battle Answers", "recs": populateGameDisplays(db, recs)}
+	templateData := map[string]interface{}{"metatitle": "Battle Answers", "currentPath": req.URL.Path,
+		"recs": populateGameDisplays(db, recs)}
 	r.HTML(200, "games/index", templateData)
 }
 
-func GamesNew(r render.Render, db *mgo.Database) {
-	templateData := map[string]interface{}{"metatitle": "Battle Answers"}
+func GamesNew(r render.Render, db *mgo.Database, req *http.Request) {
+	templateData := map[string]interface{}{"metatitle": "Battle Answers", "currentPath": req.URL.Path}
 	r.HTML(200, "games/new", templateData)
 }
 
-func GamesCreate(form GameForm, r render.Render, db *mgo.Database) {
+func GamesCreate(form GameForm, r render.Render, db *mgo.Database, req *http.Request) {
 	var rec models.GameRec
 
 	rec.Name = form.Name
 
 	models.InsertGame(db, rec)
 
-	GamesIndex(r, db)
+	GamesIndex(r, db, req)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
